@@ -1,0 +1,38 @@
+{
+  "version": "v20261016_063959",
+  "algorithm": "RandomForestClassifier with StandardScaler & OneHotEncoder",
+  "training_samples": 5000,
+  "test_samples": 1000,
+  "accuracy": 0.942,
+  "roc_auc": 0.9879,
+  "f1_score": 0.9455,
+  "precision": 0.9315,
+  "recall": 0.9599,
+  "feature_importances": {
+    "credit_score": 36.21,
+    "annual_income": 29.8,
+    "has_prior_default": 8.47,
+    "loan_amount": 7.86,
+    "debt_to_income_ratio": 6.96,
+    "employment_years": 4.13,
+    "age": 2.66,
+    "loan_purpose": 1.54,
+    "home_ownership": 1.28,
+    "loan_term_months": 1.09
+  },
+  "numerical_features": [
+    "age",
+    "annual_income",
+    "credit_score",
+    "loan_amount",
+    "loan_term_months",
+    "employment_years",
+    "debt_to_income_ratio"
+  ],
+  "categorical_features": [
+    "home_ownership",
+    "loan_purpose",
+    "has_prior_default"
+  ],
+  "trained_at": "2026-10-16T06:39:59.787743+00:00"
+}

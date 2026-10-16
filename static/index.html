@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FinRisk AI - Production-grade Machine Learning API & Credit Risk Underwriting Application with SQLite Database Persistence.">
+  <title>FinRisk AI — Credit Risk ML & Database Management</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">FinRisk <span class="accent-gradient">AI</span></span>
+          <span class="brand-tag">ML Underwriting & Risk Engine</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" id="main-nav-tabs">
+        <button class="nav-tab active" data-tab="tab-predict" id="nav-predict-btn">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          ML Predictor
+        </button>
+        <button class="nav-tab" data-tab="tab-records" id="nav-records-btn">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          Database Records
+        </button>
+        <button class="nav-tab" data-tab="tab-analytics" id="nav-analytics-btn">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          Analytics
+        </button>
+        <button class="nav-tab" data-tab="tab-model" id="nav-model-btn">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          ML Model
+        </button>
+        <button class="nav-tab" data-tab="tab-api" id="nav-api-btn">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          API Docs
+        </button>
+      </nav>
+
+      <!-- System Status indicator & OpenAPI Docs link -->
+      <div class="header-actions">
+        <div class="status-indicator" id="system-status-indicator" title="Database and ML Model Status">
+          <span class="status-dot online"></span>
+          <span class="status-text" id="status-label">Online</span>
+        </div>
+        <a href="/docs" target="_blank" class="docs-btn" id="swagger-docs-link" title="Open Interactive OpenAPI Swagger">
+          <span>Swagger</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- ================================================================= -->
+    <!-- TAB 1: ML PREDICTOR & EVALUATION                                  -->
+    <!-- ================================================================= -->
+    <section class="tab-pane active" id="tab-predict">
+      <div class="pane-header">
+        <div>
+          <h1 class="pane-title">Intelligent Credit Risk Scoring & Loan Approval</h1>
+          <p class="pane-subtitle">Enter applicant parameters to evaluate credit risk via our Machine Learning Pipeline. Every prediction is evaluated and stored in the database.</p>
+        </div>
+        
+        <!-- Preset Demo Buttons -->
+        <div class="preset-group">
+          <span class="preset-label">Quick Presets:</span>
+          <button type="button" class="preset-btn prime" id="preset-prime-btn" title="Load High Approval Applicant">
+            🌟 Prime Profile
+          </button>
+          <button type="button" class="preset-btn moderate" id="preset-moderate-btn" title="Load Borderline Applicant">
+            ⚖️ Moderate Risk
+          </button>
+          <button type="button" class="preset-btn subprime" id="preset-subprime-btn" title="Load High Risk Profile">
+            ⚠️ Subprime Risk
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-two-columns">
+        <!-- Applicant Form -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">Applicant Profile</h2>
+            <span class="badge badge-info">Inference Input</span>
+          </div>
+
+          <form id="prediction-form" class="prediction-form">
+            <!-- Basic Details -->
+            <div class="form-row">
+              <div class="form-group col-8">
+                <label for="applicant_name">Applicant Full Name</label>
+                <input type="text" id="applicant_name" name="applicant_name" required placeholder="e.g. Elena Rostova" value="Dr. Sophia Sterling">
+              </div>
+              <div class="form-group col-4">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" min="18" max="100" required value="41">
+              </div>
+            </div>
+
+            <!-- Financial Capacity -->
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label for="annual_income">Gross Annual Income ($)</label>
+                <input type="number" id="annual_income" name="annual_income" min="5000" step="1000" required value="145000">
+              </div>
+              <div class="form-group col-6">
+                <label for="credit_score">
+                  Credit Score (FICO)
+                  <span class="slider-val" id="credit_score_val">795</span>
+                </label>
+                <input type="range" id="credit_score" name="credit_score" min="350" max="850" step="5" value="795" class="score-slider">
+              </div>
+            </div>
+
+            <!-- Loan Specifications -->
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label for="loan_amount">Requested Loan ($)</label>
+                <input type="number" id="loan_amount" name="loan_amount" min="1000" step="500" required value="25000">
+              </div>
+              <div class="form-group col-6">
+                <label for="loan_term_months">Term Duration</label>
+                <select id="loan_term_months" name="loan_term_months">
+                  <option value="12">12 Months (1 Year)</option>
+                  <option value="24">24 Months (2 Years)</option>
+                  <option value="36" selected>36 Months (3 Years)</option>
+                  <option value="48">48 Months (4 Years)</option>
+                  <option value="60">60 Months (5 Years)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Risk Metrics -->
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label for="debt_to_income_ratio">
+                  Debt-to-Income (DTI %)
+                  <span class="slider-val" id="dti_val">14.5%</span>
+                </label>
+                <input type="range" id="debt_to_income_ratio" name="debt_to_income_ratio" min="5" max="65" step="0.5" value="14.5" class="dti-slider">
+              </div>
+              <div class="form-group col-6">
+                <label for="employment_years">Employment Tenure (Yrs)</label>
+                <input type="number" id="employment_years" name="employment_years" min="0" max="50" step="0.5" required value="9.5">
+              </div>
+            </div>
+
+            <!-- Purpose & Home Ownership -->
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label for="home_ownership">Home Ownership</label>
+                <select id="home_ownership" name="home_ownership">
+                  <option value="OWN" selected>Home Owner (Free & Clear)</option>
+                  <option value="MORTGAGE">Mortgage</option>
+                  <option value="RENT">Rent</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+              <div class="form-group col-6">
+                <label for="loan_purpose">Loan Purpose</label>
+                <select id="loan_purpose" name="loan_purpose">
+                  <option value="home_improvement" selected>Home Improvement</option>
+                  <option value="debt_consolidation">Debt Consolidation</option>
+                  <option value="business">Business Expansion</option>
+                  <option value="education">Higher Education</option>
+                  <option value="medical">Medical Expenses</option>
+                  <option value="personal">Personal / Auto</option>
+                  <option value="other">Other Purpose</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Toggle switch: Prior Defaults -->
+            <div class="form-row toggle-row">
+              <label class="toggle-container" for="has_prior_default">
+                <input type="checkbox" id="has_prior_default" name="has_prior_default">
+                <span class="toggle-slider"></span>
+                <span class="toggle-text">Applicant has prior credit default in past 5 years</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary submit-btn" id="predict-submit-btn">
+                <span class="btn-text">Execute ML Underwriting</span>
+                <span class="btn-spinner hidden" id="predict-spinner"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ML Inference Assessment Result -->
+        <div class="card glass-card result-panel" id="result-panel">
+          <div class="card-header">
+            <h2 class="card-title">Underwriting Decision</h2>
+            <span class="badge" id="model-version-tag">Model: v1.0</span>
+          </div>
+
+          <div id="result-empty-state" class="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3>Awaiting Applicant Data</h3>
+            <p>Fill out the profile on the left or select a <strong>Quick Preset</strong> above to run real-time machine learning inference.</p>
+          </div>
+
+          <div id="result-content" class="result-content hidden">
+            <!-- Decision Banner -->
+            <div class="decision-banner" id="decision-banner">
+              <div class="decision-badge" id="decision-badge">APPROVED</div>
+              <div class="decision-sub" id="decision-sub">Approved with High Credit Quality</div>
+            </div>
+
+            <!-- Gauge & Key Metric Grid -->
+            <div class="metrics-hero">
+              <!-- Animated Circular Gauge -->
+              <div class="gauge-wrapper">
+                <svg class="gauge-svg" viewBox="0 0 120 120">
+                  <circle class="gauge-bg" cx="60" cy="60" r="50" />
+                  <circle class="gauge-meter" id="gauge-meter" cx="60" cy="60" r="50" />
+                </svg>
+                <div class="gauge-overlay">
+                  <span class="gauge-score" id="gauge-score">12</span>
+                  <span class="gauge-sub">Risk Score / 100</span>
+                </div>
+              </div>
+
+              <!-- Metric Stack -->
+              <div class="stat-pills">
+                <div class="stat-pill">
+                  <span class="stat-pill-label">Risk Category</span>
+                  <span class="stat-pill-val" id="pill-risk-tier">Low Risk</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="stat-pill-label">Suggested APR</span>
+                  <span class="stat-pill-val highlight" id="pill-apr">6.98%</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="stat-pill-label">Model Confidence</span>
+                  <span class="stat-pill-val" id="pill-confidence">96.4%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feature Explanations / Contributing Factors -->
+            <div class="factors-section">
+              <h3 class="section-title">Model Explainability & Key Drivers</h3>
+              <div class="factors-list" id="factors-list">
+                <!-- Dynamically generated factor cards -->
+              </div>
+            </div>
+
+            <!-- Database Confirmation & Jump Link -->
+            <div class="db-persisted-banner" id="db-persisted-banner">
+              <div class="db-banner-left">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                <span>Persisted to SQLite DB &bull; Record ID: <strong id="db-saved-id">#1</strong></span>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline" id="jump-to-records-btn">
+                View in Database Tab &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: DATABASE RECORDS & RETRIEVAL                               -->
+    <!-- ================================================================= -->
+    <section class="tab-pane" id="tab-records">
+      <div class="pane-header">
+        <div>
+          <h1 class="pane-title">Stored Prediction Records</h1>
+          <p class="pane-subtitle">Live database table of all generated ML loan predictions. Search, filter, inspect details, override statuses, or export data.</p>
+        </div>
+        <div class="header-tools">
+          <button type="button" class="btn btn-outline" id="refresh-records-btn" title="Refresh Table">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Refresh
+          </button>
+          <button type="button" class="btn btn-outline" id="export-csv-btn" title="Download records as CSV">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Filters Toolbar -->
+      <div class="filter-bar card glass-card">
+        <div class="filter-group flex-grow">
+          <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="records-search-input" placeholder="Search by applicant name, reference UUID, or purpose...">
+        </div>
+        <div class="filter-group">
+          <label for="filter-tier">Risk Tier:</label>
+          <select id="filter-tier">
+            <option value="">All Tiers</option>
+            <option value="Low Risk">Low Risk</option>
+            <option value="Moderate Risk">Moderate Risk</option>
+            <option value="High Risk">High Risk</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-decision">Decision:</label>
+          <select id="filter-decision">
+            <option value="">All Decisions</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="REJECTED">REJECTED</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Records Table Card -->
+      <div class="card glass-card table-card">
+        <div class="table-responsive">
+          <table class="data-table" id="records-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Applicant</th>
+                <th>Credit</th>
+                <th>Income</th>
+                <th>Loan Amount</th>
+                <th>DTI</th>
+                <th>Risk Score</th>
+                <th>Decision</th>
+                <th>Status</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="records-tbody">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-footer">
+          <div class="pagination-info" id="pagination-info">Showing 0 of 0 records</div>
+          <div class="pagination-buttons">
+            <button type="button" class="btn btn-sm btn-outline" id="prev-page-btn" disabled>&larr; Prev</button>
+            <span class="page-indicator" id="page-indicator">Page 1 of 1</span>
+            <button type="button" class="btn btn-sm btn-outline" id="next-page-btn" disabled>Next &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: PORTFOLIO ANALYTICS                                        -->
+    <!-- ================================================================= -->
+    <section class="tab-pane" id="tab-analytics">
+      <div class="pane-header">
+        <div>
+          <h1 class="pane-title">Database Portfolio Analytics</h1>
+          <p class="pane-subtitle">Aggregated statistical overview of underwriting decisions, risk distribution, and loan volume.</p>
+        </div>
+        <button type="button" class="btn btn-outline" id="refresh-analytics-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh Stats
+        </button>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">Total Predictions Evaluated</div>
+          <div class="kpi-val" id="kpi-total-apps">0</div>
+          <div class="kpi-sub">Stored in SQLite Database</div>
+        </div>
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">Approval Rate</div>
+          <div class="kpi-val highlight" id="kpi-approval-rate">0.0%</div>
+          <div class="kpi-sub"><span id="kpi-approved-count">0</span> Approved / <span id="kpi-rejected-count">0</span> Rejected</div>
+        </div>
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">Average Risk Score</div>
+          <div class="kpi-val" id="kpi-avg-risk">0.0</div>
+          <div class="kpi-sub">Scale: 0 (Prime) to 100 (Default)</div>
+        </div>
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">Total Loan Volume Evaluated</div>
+          <div class="kpi-val" id="kpi-loan-volume">$0</div>
+          <div class="kpi-sub">Average: <span id="kpi-avg-loan">$0</span></div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="grid-two-columns charts-row">
+        <!-- Chart 1: Risk Tier Breakdown -->
+        <div class="card glass-card chart-card">
+          <div class="card-header">
+            <h2 class="card-title">Risk Tier Distribution</h2>
+            <span class="badge">Donut Breakdown</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="tierChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Loan Purpose Breakdown -->
+        <div class="card glass-card chart-card">
+          <div class="card-header">
+            <h2 class="card-title">Applications by Loan Purpose</h2>
+            <span class="badge">Volume by Category</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="purposeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 4: ML MODEL PERFORMANCE & RETRAINING                          -->
+    <!-- ================================================================= -->
+    <section class="tab-pane" id="tab-model">
+      <div class="pane-header">
+        <div>
+          <h1 class="pane-title">Model Architecture & Live Retraining</h1>
+          <p class="pane-subtitle">Inspect the underlying Scikit-Learn Random Forest pipeline, feature importance weights, and trigger retrains on demand.</p>
+        </div>
+      </div>
+
+      <!-- Model Spec Card -->
+      <div class="card glass-card model-meta-card">
+        <div class="model-meta-grid">
+          <div>
+            <div class="meta-label">Active Algorithm</div>
+            <div class="meta-val" id="model-algo-name">Random Forest Classifier (Ensemble)</div>
+          </div>
+          <div>
+            <div class="meta-label">Pipeline Version</div>
+            <div class="meta-val" id="model-meta-version">v1.0</div>
+          </div>
+          <div>
+            <div class="meta-label">Training Samples</div>
+            <div class="meta-val" id="model-train-samples">5,000</div>
+          </div>
+          <div>
+            <div class="meta-label">Last Trained</div>
+            <div class="meta-val" id="model-trained-date">Just Now</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Metrics KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">Test Accuracy</div>
+          <div class="kpi-val" id="metric-accuracy">0.0%</div>
+          <div class="kpi-sub">Out-of-fold generalization</div>
+        </div>
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">ROC - AUC Score</div>
+          <div class="kpi-val highlight" id="metric-roc-auc">0.000</div>
+          <div class="kpi-sub">Discrimination capacity</div>
+        </div>
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">F1-Score</div>
+          <div class="kpi-val" id="metric-f1">0.000</div>
+          <div class="kpi-sub">Harmonic mean of P & R</div>
+        </div>
+        <div class="kpi-card glass-card">
+          <div class="kpi-label">Precision / Recall</div>
+          <div class="kpi-val" id="metric-prec-rec">0% / 0%</div>
+          <div class="kpi-sub">False positive vs negative trade-off</div>
+        </div>
+      </div>
+
+      <!-- Feature Importance & Retraining Control -->
+      <div class="grid-two-columns">
+        <!-- Feature Importance Chart -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">Feature Importance Ranking (%)</h2>
+            <span class="badge">Gini Importance</span>
+          </div>
+          <div class="chart-container" style="height: 320px;">
+            <canvas id="featureImportanceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Retrain Trigger Box -->
+        <div class="card glass-card retrain-box">
+          <div class="card-header">
+            <h2 class="card-title">On-Demand Model Retraining</h2>
+            <span class="badge badge-warning">Pipeline Sync</span>
+          </div>
+          <p class="retrain-desc">
+            Trigger a complete re-training cycle using fresh data distributions. The system automatically recalculates hyperparameters, fits the Random Forest pipeline, writes new artifacts to disk, logs the audit record in SQLite, and hot-reloads inference memory without downtime.
+          </p>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="retrain-samples">Dataset Generation Size (samples):</label>
+            <input type="number" id="retrain-samples" min="1000" max="15000" step="1000" value="5000">
+          </div>
+
+          <button type="button" class="btn btn-primary submit-btn" id="retrain-btn" style="margin-top: 1.5rem;">
+            <span class="btn-text">⚡ Retrain & Hot-Reload Model</span>
+            <span class="btn-spinner hidden" id="retrain-spinner"></span>
+          </button>
+
+          <div id="retrain-result-box" class="retrain-status-box hidden">
+            <!-- Populated on retrain -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 5: API DOCUMENTATION & QUICK REFERENCE                        -->
+    <!-- ================================================================= -->
+    <section class="tab-pane" id="tab-api">
+      <div class="pane-header">
+        <div>
+          <h1 class="pane-title">REST API Endpoints & Developer Integration</h1>
+          <p class="pane-subtitle">Clean JSON APIs designed for real-world integration. Ready to consume from any frontend, mobile app, or backend microservice.</p>
+        </div>
+        <a href="/docs" target="_blank" class="btn btn-primary">
+          Open Interactive Swagger UI &rarr;
+        </a>
+      </div>
+
+      <div class="api-endpoints-grid">
+        <!-- Endpoint 1 -->
+        <div class="endpoint-card card glass-card">
+          <div class="endpoint-header">
+            <span class="http-badge post">POST</span>
+            <code class="endpoint-path">/api/predict</code>
+          </div>
+          <p class="endpoint-desc">Executes ML inference on applicant payload, determines risk tier and APR, and persists complete record into SQLite.</p>
+          <div class="code-box">
+            <pre><code>curl -X POST http://127.0.0.1:8000/api/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "applicant_name": "Elena Rostova",
+    "age": 34,
+    "annual_income": 85000,
+    "credit_score": 740,
+    "loan_amount": 20000,
+    "loan_term_months": 36,
+    "employment_years": 5.5,
+    "debt_to_income_ratio": 18.5,
+    "home_ownership": "MORTGAGE",
+    "loan_purpose": "home_improvement",
+    "has_prior_default": false
+  }'</code></pre>
+          </div>
+        </div>
+
+        <!-- Endpoint 2 -->
+        <div class="endpoint-card card glass-card">
+          <div class="endpoint-header">
+            <span class="http-badge get">GET</span>
+            <code class="endpoint-path">/api/predictions</code>
+          </div>
+          <p class="endpoint-desc">Retrieves stored records with pagination, text search (name, UUID), and filtering by risk tier or decision.</p>
+          <div class="code-box">
+            <pre><code>curl "http://127.0.0.1:8000/api/predictions?page=1&size=10&risk_tier=Low+Risk"</code></pre>
+          </div>
+        </div>
+
+        <!-- Endpoint 3 -->
+        <div class="endpoint-card card glass-card">
+          <div class="endpoint-header">
+            <span class="http-badge get">GET</span>
+            <code class="endpoint-path">/api/stats</code>
+          </div>
+          <p class="endpoint-desc">Returns live aggregate metrics: approval rate, total loan volume, average credit score, and risk distributions.</p>
+          <div class="code-box">
+            <pre><code>curl "http://127.0.0.1:8000/api/stats"</code></pre>
+          </div>
+        </div>
+
+        <!-- Endpoint 4 -->
+        <div class="endpoint-card card glass-card">
+          <div class="endpoint-header">
+            <span class="http-badge patch">PATCH</span>
+            <code class="endpoint-path">/api/predictions/{id}</code>
+          </div>
+          <p class="endpoint-desc">Update review status (e.g. manual underwriting override) or notes on a stored decision.</p>
+          <div class="code-box">
+            <pre><code>curl -X PATCH http://127.0.0.1:8000/api/predictions/1 \
+  -H "Content-Type: application/json" \
+  -d '{"review_status": "APPROVED_OVERRIDE", "notes": "Approved with senior loan officer sign-off."}'</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: RECORD DETAILS & UNDERWRITER OVERRIDE                      -->
+  <!-- ================================================================= -->
+  <div class="modal-overlay hidden" id="record-modal-overlay">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h2 class="modal-title">Prediction Record Details</h2>
+        <button type="button" class="modal-close-btn" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Populated via JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="modal-dismiss-btn">Close</button>
+        <button type="button" class="btn btn-primary" id="modal-save-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- App JavaScript -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
